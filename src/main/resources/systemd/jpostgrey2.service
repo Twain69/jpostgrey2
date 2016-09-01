@@ -1,0 +1,10 @@
+[Unit]
+Description=jpostgrey2
+After=syslog.target
+
+[Service]
+User=seb
+ExecStart=/opt/jpostgrey2/jpostgrey2.jar start
+
+[Install]
+WantedBy=multi-user.target

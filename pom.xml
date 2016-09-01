@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.flegler.jpostgrey2</groupId>
+	<artifactId>jpostgrey2</artifactId>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.4.0.RELEASE</version>
+	</parent>
+
+	<name>jPostgrey2</name>
+	<description>A java based greylisting filter for postfix</description>
+	<url>https://github.com/Twain69/jpostgrey2</url>
+
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+
+		<finalName>${project.artifactId}</finalName>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-dependency-plugin
+										</artifactId>
+										<versionRange>
+											[2.1,)
+										</versionRange>
+										<goals>
+											<goal>unpack</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<executable>true</executable>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<index>true</index>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+
+
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>buildrpm</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>rpm-maven-plugin</artifactId>
+						<version>2.1.5</version>
+						<executions>
+							<execution>
+								<id>generate-rpm</id>
+								<goals>
+									<goal>rpm</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<copyright>2015, flegler.com</copyright>
+							<distribution />
+							<license></license>
+							<group>Daemons</group>
+							<packager>Oliver Flegler</packager>
+							<defineStatements>
+								<defineStatement>_unpackaged_files_terminate_build 0</defineStatement>
+							</defineStatements>
+
+							<preinstallScriptlet>
+								<scriptFile>src/main/resources/preInstall.sh</scriptFile>
+							</preinstallScriptlet>
+							<postremoveScriptlet>
+								<scriptFile>src/main/resources/postRemove.sh</scriptFile>
+							</postremoveScriptlet>
+
+							<mappings>
+
+								<mapping>
+									<directory>/opt/jpostgrey/</directory>
+									<directoryIncluded>true</directoryIncluded>
+									<filemode>775</filemode>
+									<username>jpostgrey</username>
+									<groupname>jpostgrey</groupname>
+								</mapping>
+
+								<mapping>
+									<directory>/opt/jpostgrey/lib</directory>
+									<directoryIncluded>true</directoryIncluded>
+									<filemode>775</filemode>
+									<username>jpostgrey</username>
+									<groupname>jpostgrey</groupname>
+								</mapping>
+
+								<mapping>
+									<directory>/opt/jpostgrey/</directory>
+									<directoryIncluded>false</directoryIncluded>
+									<filemode>775</filemode>
+									<username>jpostgrey</username>
+									<groupname>jpostgrey</groupname>
+									<sources>
+										<source>
+											<location>target/jpostgrey2.jar</location>
+										</source>
+									</sources>
+								</mapping>
+
+								<mapping>
+									<directory>/usr/lib/systemd/system</directory>
+									<directoryIncluded>false</directoryIncluded>
+									<filemode>644</filemode>
+									<username>root</username>
+									<groupname>root</groupname>
+									<sources>
+										<source>
+											<location>src/main/resources/systemd/jpostgrey2.service</location>
+										</source>
+									</sources>
+								</mapping>
+
+							</mappings>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+	</profiles>
+
+
+</project>
+
